@@ -1,23 +1,72 @@
-streamlit
-torch
-torchvision
-numpy
-opencv-python-headless
-Pillow
-PyYAML
-ultralytics
-diffusers
-transformers
-scipy
-rembg
-onnxruntime
-lpips
-easyocr
-mediapipe
-imagehash
-streamlit-drawable-canvas
-streamlit-image-comparison
-timm
-POT
-accelerate
-safetensors
+# ==============================================================================
+# requirements.txt для Ultimate Watermark Remover v8.0
+# Оптимизирован для Streamlit Community Cloud (Python 3.12)
+# ==============================================================================
+
+# --- Core Framework & UI ---
+streamlit>=1.32.0
+streamlit-drawable-canvas>=0.9.3
+streamlit-image-comparison>=0.0.4
+
+# --- Deep Learning & Computer Vision ---
+torch>=2.2.0
+torchvision>=0.17.0
+numpy>=1.26.0
+# ВАЖНО: Используем headless-версии OpenCV для Streamlit Cloud, 
+# чтобы избежать ошибки "ImportError: libGL.so.1: cannot open shared object file"
+opencv-python-headless>=4.9.0
+opencv-contrib-python-headless>=4.9.0
+Pillow>=10.2.0
+scipy>=1.12.0
+
+# --- Detection & Segmentation ---
+ultralytics>=8.1.0
+
+# --- Inpainting & Diffusion Models ---
+diffusers>=0.27.0
+transformers>=4.38.0
+timm>=0.9.16
+accelerate>=0.27.0
+safetensors>=0.4.2
+iopaint>=1.3.0
+
+# --- Background Removal & Matting ---
+rembg>=2.0.55
+pymatting>=1.1.12
+
+# --- Super Resolution ---
+realesrgan>=0.3.0
+basicsr>=1.4.2
+
+# --- OCR & Text Recognition ---
+easyocr>=1.7.1
+
+# --- Face & Pose Detection ---
+mediapipe>=0.10.11
+
+# --- Image Quality & Metrics ---
+lpips>=0.1.4
+ImageHash>=4.3.1
+pyiqa>=0.1.10
+
+# --- Utilities & Math ---
+PyYAML>=6.0.1
+POT>=0.9.3
+
+# ==============================================================================
+# ОПЦИОНАЛЬНЫЕ ПАКЕТЫ (Advanced v8.0 Features)
+# Раскомментируйте строки ниже (уберите символ #), если вы активно используете 
+# эти функции в коде. Они устанавливаются напрямую из GitHub.
+# ==============================================================================
+
+# SAM 2 (Segment Anything 2)
+# git+https://github.com/facebookresearch/sam2.git
+
+# Grounding DINO
+# git+https://github.com/IDEA-Research/GroundingDINO.git
+
+# Depth Anything V2
+# git+https://github.com/DepthAnything/Depth-Anything-V2.git
+
+# ViTMatte
+# git+https://github.com/hustvl/ViTMatte.git
