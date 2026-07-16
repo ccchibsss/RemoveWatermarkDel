@@ -51,25 +51,21 @@ import yaml
 import glob as glob_module
 import asyncio
 from functools import partial
-
 warnings.filterwarnings('ignore', category=UserWarning, module='torch')
 warnings.filterwarnings('ignore', category=FutureWarning, module='transformers')
 warnings.filterwarnings('ignore', category=UserWarning, module='ultralytics')
 warnings.filterwarnings('ignore', category=DeprecationWarning)
-
 # Опциональные импорты
 try:
     from ultralytics import YOLO
     YOLO_AVAILABLE = True
 except ImportError:
     YOLO_AVAILABLE = False
-
 try:
     from iopaint.model_manager import ModelManager as IOPaintModelManager
     IOPAINT_AVAILABLE = True
 except ImportError:
     IOPAINT_AVAILABLE = False
-
 try:
     from diffusers import (
         StableDiffusionInpaintPipeline,
@@ -82,14 +78,12 @@ try:
     DIFFUSERS_AVAILABLE = True
 except ImportError:
     DIFFUSERS_AVAILABLE = False
-
 try:
     from sam2.build_sam import build_sam2
     from sam2.sam2_image_predictor import SAM2ImagePredictor
     SAM_AVAILABLE = True
 except ImportError:
     SAM_AVAILABLE = False
-
 try:
     from groundingdino.util.inference import load_model as load_grounding_dino
     from groundingdino.util.inference import predict as gdino_predict
@@ -97,98 +91,82 @@ try:
     GROUNDED_SAM_AVAILABLE = SAM_AVAILABLE
 except ImportError:
     GROUNDED_SAM_AVAILABLE = False
-
 try:
     from rembg import remove, new_session
     REMBG_AVAILABLE = True
 except ImportError:
     REMBG_AVAILABLE = False
-
 try:
     from realesrgan import RealESRGANer
     from basicsr.archs.rrdbnet_arch import RRDBNet
     REALESRGAN_AVAILABLE = True
 except ImportError:
     REALESRGAN_AVAILABLE = False
-
 try:
     from transformers import CLIPProcessor, CLIPModel, CLIPImageProcessor
     CLIP_AVAILABLE = True
 except ImportError:
     CLIP_AVAILABLE = False
-
 try:
     from transformers import BlipProcessor, BlipForConditionalGeneration
     BLIP_AVAILABLE = True
 except ImportError:
     BLIP_AVAILABLE = False
-
 try:
     from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
     SEGFORMER_AVAILABLE = True
 except ImportError:
     SEGFORMER_AVAILABLE = False
-
 try:
     import timm
     DINOV2_AVAILABLE = True
 except ImportError:
     DINOV2_AVAILABLE = False
-
 try:
     import lpips
     LPIPS_AVAILABLE = True
 except ImportError:
     LPIPS_AVAILABLE = False
-
 try:
     import easyocr
     EASYOCR_AVAILABLE = True
 except ImportError:
     EASYOCR_AVAILABLE = False
-
 try:
     import mediapipe as mp
     MEDIAPIPE_AVAILABLE = True
 except ImportError:
     MEDIAPIPE_AVAILABLE = False
-
 try:
     import imagehash
     IMAGEHASH_AVAILABLE = True
 except ImportError:
     IMAGEHASH_AVAILABLE = False
-
 try:
     from streamlit_drawable_canvas import st_canvas
     CANVAS_AVAILABLE = True
 except ImportError:
     CANVAS_AVAILABLE = False
-
 try:
     from streamlit_image_comparison import image_comparison
     IMAGE_COMPARISON_AVAILABLE = True
 except ImportError:
     IMAGE_COMPARISON_AVAILABLE = False
-
 try:
     import pymatting
     PYMATTING_AVAILABLE = True
 except ImportError:
     PYMATTING_AVAILABLE = False
-
 try:
     from depth_anything_v2.dpt import DepthAnythingV2
     DEPTH_AVAILABLE = True
 except ImportError:
     DEPTH_AVAILABLE = False
-
 try:
     import torchvision.models as models
     TORCHVISION_AVAILABLE = True
 except ImportError:
     TORCHVISION_AVAILABLE = False
-
 # v8.0: НОВЫЕ ИМПОРТЫ
 try:
     from scipy.sparse import lil_matrix, csr_matrix
@@ -196,31 +174,26 @@ try:
     SCIPY_SPARSE_AVAILABLE = True
 except ImportError:
     SCIPY_SPARSE_AVAILABLE = False
-
 try:
     import ot  # POT library для Optimal Transport
     OT_AVAILABLE = True
 except ImportError:
     OT_AVAILABLE = False
-
 try:
     from vitmatte import VitMatte
     VITMATTE_AVAILABLE = True
 except ImportError:
     VITMATTE_AVAILABLE = False
-
 try:
     from diffusers import StableDiffusionBrushNetPipeline, BrushNetModel
     BRUSHNET_AVAILABLE = True
 except ImportError:
     BRUSHNET_AVAILABLE = False
-
 try:
     from pyiqa import create_metric
     PYIQA_AVAILABLE = True
 except ImportError:
     PYIQA_AVAILABLE = False
-
 IP_ADAPTER_AVAILABLE = DIFFUSERS_AVAILABLE
 
 # ============================================================================
@@ -228,7 +201,6 @@ IP_ADAPTER_AVAILABLE = DIFFUSERS_AVAILABLE
 # ============================================================================
 BASE_DIR = Path(".")
 CONFIG_PATH = BASE_DIR / "config.yaml"
-
 DEFAULT_CONFIG = {
     "thresholds": {
         "min_clip_score": 0.70,
@@ -277,6 +249,7 @@ DEFAULT_CONFIG = {
         "use_lighting_matching": False,
         "noise_sample_radius": 50,
         "lighting_sample_radius": 60,
+        "fft_local_radius": 64,  # ← ДОБАВЛЕНО
         # Hollywood VFX v8.0
         "use_reference_inpainting": False,
         "use_depth_aware": False,
@@ -303,7 +276,6 @@ DEFAULT_CONFIG = {
         "show_detailed_stats": True,
     }
 }
-
 def load_config() -> Dict:
     if CONFIG_PATH.exists():
         try:
@@ -320,7 +292,6 @@ def load_config() -> Dict:
             logging.warning(f"Ошибка чтения config.yaml: {e}")
             return DEFAULT_CONFIG.copy()
     return DEFAULT_CONFIG.copy()
-
 CONFIG = load_config()
 
 # ============================================================================
@@ -561,7 +532,7 @@ def bbox_to_yolo(bbox, img_width, img_height, class_id) -> str:
     yc = max(0.0001, min(0.9999, ((y1 + y2) / 2) / img_height))
     w = max(0.0001, min(0.9999, (x2 - x1) / img_width))
     h = max(0.0001, min(0.9999, (y2 - y1) / img_height))
-    return f"{class_id} {xc:.6f} {yc:.6f} {w:.6f} {h:.6f}\n"
+    return f"{class_id} {xc:.6f} {yc:.6f} {w:.6f} {h:.6f}\n"  # ← ИСПРАВЛЕНО
 
 def validate_detection_for_dataset(detection, quality_score) -> bool:
     if quality_score < MIN_DATASET_QUALITY:
@@ -596,7 +567,7 @@ def save_detection_to_dataset(image, image_name, detections, quality_score) -> b
     if lines:
         with open(DIRS["dataset_labels"] / f"{unique_name}.txt", 'w') as f:
             f.writelines(lines)
-        return True
+    return True
     return False
 
 def save_user_correction(image, user_mask, original_detections):
@@ -1410,7 +1381,6 @@ def create_mask_from_detections(image_size, detections, padding=15) -> Image.Ima
 # ============================================================================
 # БЛОК 12: FORENSIC-PROOF v8.0 (УЛУЧШЕННЫЙ ПАЙПЛАЙН)
 # ============================================================================
-
 # v8.0: Настоящий Poisson Blending через scipy.sparse
 def poisson_blend_scipy(source, target, mask, iterations=1) -> Image.Image:
     """Настоящий Poisson Image Editing (Pérez et al., 2003) через scipy.sparse"""
@@ -1444,8 +1414,8 @@ def poisson_blend_scipy(source, target, mask, iterations=1) -> Image.Image:
                     else:
                         A[idx, idx] = 1
                         b[idx] = dst[y, x, c]
-            x = spsolve(csr_matrix(A), b)
-            result[:, :, c] = x.reshape(h, w)
+            solution = spsolve(csr_matrix(A), b)  # ← ИСПРАВЛЕНО: x → solution
+            result[:, :, c] = solution.reshape(h, w)
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Poisson blend scipy error: {e}")
@@ -1470,7 +1440,7 @@ def poisson_blend_fallback(source, target, mask, iterations=500) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Poisson blend fallback error: {e}")
-    return source
+        return source
 
 def poisson_blend(source, target, mask, iterations=500) -> Image.Image:
     """Обертка для выбора метода Poisson blending"""
@@ -1511,7 +1481,8 @@ def match_noise_profile_advanced(image, mask, sample_radius=60) -> Image.Image:
                 if i in noise_by_brightness:
                     std = noise_by_brightness[i]
                     noise = np.random.normal(0, std, bin_mask.sum())
-                    synthetic[patch_mask][bin_mask] = noise
+                    combined_mask = patch_mask & bin_mask  # ← ИСПРАВЛЕНО
+                    synthetic[combined_mask] = noise
             blurred_c = cv2.GaussianBlur(img_arr[:, :, c], (5, 5), 0)
             result[:, :, c] = np.where(patch_mask, blurred_c + synthetic, img_arr[:, :, c])
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
@@ -1544,7 +1515,7 @@ def match_noise_profile(image, mask, sample_radius=None) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Noise Matching: {e}")
-    return image
+        return image
 
 # v8.0: Local FFT с Hann Windowing
 def frequency_cleanup_local(image, mask) -> Image.Image:
@@ -1555,7 +1526,7 @@ def frequency_cleanup_local(image, mask) -> Image.Image:
         img_arr = np.array(image.convert('L')).astype(np.float32)
         h, w = img_arr.shape
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,
-                                           (CONFIG["quality"]["fft_local_radius"], CONFIG["quality"]["fft_local_radius"]))
+            (CONFIG["quality"]["fft_local_radius"], CONFIG["quality"]["fft_local_radius"]))
         dilated = cv2.dilate(mask, kernel, iterations=1)
         eroded = cv2.erode(mask, kernel, iterations=1)
         local_zone = (dilated > 127) & (eroded <= 127)
@@ -1593,7 +1564,7 @@ def frequency_cleanup_local(image, mask) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Local Frequency Cleanup: {e}")
-    return image
+        return image
 
 def seamless_clone_blend(source, target, mask) -> Image.Image:
     """OpenCV seamlessClone — промышленный стандарт смешивания"""
@@ -1613,7 +1584,7 @@ def seamless_clone_blend(source, target, mask) -> Image.Image:
         return Image.fromarray(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
     except Exception as e:
         logger.warning(f"Seamless clone error: {e}")
-    return source
+        return source
 
 # v8.0: Laplacian Pyramid Blending
 def laplacian_pyramid_blend(src, dst, mask, levels=6) -> Image.Image:
@@ -1653,7 +1624,7 @@ def laplacian_pyramid_blend(src, dst, mask, levels=6) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Laplacian Pyramid Blending: {e}")
-    return src
+        return src
 
 # v8.0: Gradient Domain Harmonization
 def gradient_domain_harmonization(src, dst, mask) -> Image.Image:
@@ -1674,11 +1645,13 @@ def gradient_domain_harmonization(src, dst, mask) -> Image.Image:
             grad_y = np.where(mask_bin > 0, grad_y_dst[:, :, c], grad_y_src)
             laplacian = cv2.Sobel(grad_x, cv2.CV_32F, 1, 0, ksize=3) + \
                         cv2.Sobel(grad_y, cv2.CV_32F, 0, 1, ksize=3)
-            result[:, :, c] = cv2.filter2D(src_arr[:, :, c], -1, np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]]) / 4.0)
+            # ИСПРАВЛЕНО: используем laplacian
+            result[:, :, c] = cv2.filter2D(laplacian, -1, np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]]) / 4.0) + \
+                              dst_arr[:, :, c] * (1 - mask_bin)
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Gradient Domain Harmonization: {e}")
-    return src
+        return src
 
 # v8.0: Optimal Transport Color Transfer
 def optimal_transport_color_transfer(src, dst, mask) -> Image.Image:
@@ -1704,7 +1677,7 @@ def optimal_transport_color_transfer(src, dst, mask) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Optimal Transport: {e}")
-    return src
+        return src
 
 # v8.0: Specular/Highlight Preservation
 def preserve_speculars(original, inpainted, mask) -> Image.Image:
@@ -1722,7 +1695,7 @@ def preserve_speculars(original, inpainted, mask) -> Image.Image:
         return Image.fromarray(result)
     except Exception as e:
         logger.warning(f"Ошибка Specular Preservation: {e}")
-    return inpainted
+        return inpainted
 
 # v8.0: PRNU Analysis
 def extract_prnu(image):
@@ -1735,7 +1708,7 @@ def extract_prnu(image):
         return noise
     except Exception as e:
         logger.warning(f"Ошибка извлечения PRNU: {e}")
-    return None
+        return None
 
 def match_prnu(original, inpainted, mask) -> Image.Image:
     """Согласование PRNU паттерна камеры"""
@@ -1755,7 +1728,7 @@ def match_prnu(original, inpainted, mask) -> Image.Image:
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка PRNU Matching: {e}")
-    return inpainted
+        return inpainted
 
 # v8.0: Multi-Quality ELA Verification
 def forensic_verify_advanced(image, mask) -> Dict:
@@ -1798,7 +1771,7 @@ def forensic_verify_advanced(image, mask) -> Dict:
         }
     except Exception as e:
         logger.warning(f"Forensic verify advanced error: {e}")
-    return {'is_clean': True, 'ela_scores': {}, 'ela_score': 0.0, 'fft_peaks': 0}
+        return {'is_clean': True, 'ela_scores': {}, 'ela_score': 0.0, 'fft_peaks': 0}
 
 def forensic_verify(result_image, mask) -> Dict:
     """Forensic-валидация: ELA + FFT для поиска артефактов"""
@@ -1826,7 +1799,7 @@ def forensic_verify(result_image, mask) -> Dict:
         }
     except Exception as e:
         logger.warning(f"Forensic verify error: {e}")
-    return {'is_clean': True, 'ela_score': 0.0, 'fft_peaks': 0}
+        return {'is_clean': True, 'ela_score': 0.0, 'fft_peaks': 0}
 
 def ensemble_inpaint(image, mask, model_fns, label="") -> Optional[Image.Image]:
     """Multi-scale ensemble: усреднение результатов нескольких моделей"""
@@ -1873,7 +1846,7 @@ def generate_context_prompt_v71(image, mask, blip_model, blip_processor) -> str:
         return prompt
     except Exception as e:
         logger.warning(f"Ошибка генерации промпта: {e}")
-    return "clean background, high quality, photorealistic"
+        return "clean background, high quality, photorealistic"
 
 def preserve_edges(image, mask, edge_threshold=50) -> Tuple[np.ndarray, np.ndarray]:
     if not CONFIG["quality"]["use_edge_preservation"]:
@@ -1888,7 +1861,7 @@ def preserve_edges(image, mask, edge_threshold=50) -> Tuple[np.ndarray, np.ndarr
         return protected_mask, edges_dilated
     except Exception as e:
         logger.warning(f"Ошибка Edge Preservation: {e}")
-    return mask, np.zeros_like(mask)
+        return mask, np.zeros_like(mask)
 
 def restore_edges_after_inpaint(original, inpainted, edges_map, mask, blend_strength=0.7) -> Image.Image:
     if not CONFIG["quality"]["use_edge_preservation"] or edges_map.sum() == 0:
@@ -1907,7 +1880,7 @@ def restore_edges_after_inpaint(original, inpainted, edges_map, mask, blend_stre
         return Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
     except Exception as e:
         logger.warning(f"Ошибка Restore Edges: {e}")
-    return inpainted
+        return inpainted
 
 def detect_residual_artifacts(image, mask) -> np.ndarray:
     img_arr = np.array(image.convert('L')).astype(np.float32)
@@ -1940,7 +1913,6 @@ def iterative_refinement(image, initial_mask, inpaint_fn, max_iterations=3, arti
         current_mask = cv2.dilate(artifact_mask, kernel, iterations=1)
         current = result
     return result if result is not None else image
-
 # ============================================================================
 # БЛОК 13: HOLLYWOOD VFX v8.0 ТЕХНИКИ
 # ============================================================================
@@ -2816,7 +2788,7 @@ def enhance_local_realesrgan(image, mask, realesrgan_model, padding=30) -> Image
         return Image.fromarray(result)
     except Exception as e:
         logger.warning(f"Ошибка локального Real-ESRGAN: {e}")
-    return image
+        return image
 
 def copy_exif_metadata(source_image, target_image) -> Image.Image:
     """v7.1: Копирование EXIF метаданных с сохранением формата"""
@@ -2831,7 +2803,7 @@ def copy_exif_metadata(source_image, target_image) -> Image.Image:
         return target_image
     except Exception as e:
         logger.warning(f"Ошибка сохранения EXIF: {e}")
-    return target_image
+        return target_image
 
 # ============================================================================
 # БЛОК 18: ЧЕКПОИНТЫ И ОТЧЁТЫ v8.0
