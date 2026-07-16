@@ -720,9 +720,8 @@ def visualize_dataset_sample(num_samples=5) -> List[Image.Image]:
         except Exception as e:
             logger.warning(f"Ошибка визуализации {img_path}: {e}")
     return samples
-
 # ============================================================================
-# БЛОК 8: ОБУЧЕНИЕ YOLO
+# БЛОК 8: ОБУЧЕНИЕ YOLO (ИСПРАВЛЕННЫЙ)
 # ============================================================================
 def train_model(epochs=100, imgsz=640, batch=16, progress_callback=None) -> Tuple[bool, str, Dict]:
     if not YOLO_AVAILABLE:
@@ -754,9 +753,15 @@ def train_model(epochs=100, imgsz=640, batch=16, progress_callback=None) -> Tupl
         model.train(data=str(DATA_YAML), epochs=epochs, imgsz=imgsz, batch=batch, device=device,
                     workers=4, optimizer='AdamW', lr0=0.01, patience=20,
                     project=str(DIRS["runs"]), name='watermark_detector', exist_ok=True, verbose=False, plots=False)
+        
         best_src = DIRS["runs"] / "watermark_detector" / "weights" / "best.pt"
+        
+        # ✅ ИСПРАВЛЕНИЕ: else перенесен сюда, сразу после проверки существования файла
         if best_src.exists():
             shutil.copy(best_src, BEST_MODEL)
+        else:
+            return False, "Не найден файл best.pt после обучения", {}
+            
         if progress_callback:
             progress_callback("Валидация модели...", 0.9)
         val_model = YOLO(str(BEST_MODEL))
@@ -771,8 +776,6 @@ def train_model(epochs=100, imgsz=640, batch=16, progress_callback=None) -> Tupl
         return True, "Обучение завершено успешно!", {
             'mAP50': mAP50, 'mAP50_95': mAP50_95, 'dataset_size': len(images), 'model_path': str(BEST_MODEL)
         }
-    else:
-        return False, "Не найден файл best.pt после обучения", {}
     except Exception as e:
         logger.error(f"Ошибка обучения: {e}", exc_info=True)
         return False, f"Ошибка обучения: {str(e)}", {}
