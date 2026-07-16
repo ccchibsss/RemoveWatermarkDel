@@ -1,0 +1,235 @@
+================================================================================
+🚀 ULTIMATE UNIT ECONOMICS FOR AUTO PARTS v100.5 - ENTERPRISE EDITION
+================================================================================
+🚀 VERSION: 100.5.1 (ENTERPRISE)
+🚀 SPECIALIZATION: AUTO PARTS, AUTO PRODUCTS, AND ASSEMBLIES
+🚀 TECHNOLOGIES: STREAMLIT, POLARS, DUCKDB, SCIKIT-LEARN, OPENPYXL, PLOTLY
+🚀 IMPROVEMENTS v100.5.1:
+FIXED GARBAGE (double UTF-8 encoding)
+AUTO-DETECTION AND CORRECTION OF COLUMN ENCODING
+CORRECT CSV READING ORDER (UTF-8 priority)
+BULK WEIGHT FOR ACCURATE LOGISTICS
+PROGRESSIVE STORAGE COST
+REAL RETURNS WITH REVERSE LOGISTICS
+SPECIFIC AUTO PARTS EXPENSES
+ACCOUNTING FOR DISCOUNTS AND PROMOTIONS IN COMMISSIONS
+ADVERTISING COSTS (ROAS/DRR)
+VARIOUS TAX REGIMES (USN 6%, USN 15%, OSN, PSN, NPD)
+PROFESSIONAL EXCEL EXPORT WITH DASHBOARDS AND GRAPHS
+ACCURATE CALCULATIONS VIA DECIMAL
+MARKET BENCHMARKS AND SENSITIVITY ANALYSIS
+PARALLEL CALCULATION FOR 100K+ PRODUCTS
+STREAMLIT 1.58+ COMPATIBILITY (width='stretch')
+DATABASE MIGRATION (auto-addition of new columns)
+================================================================================
+
+# ============================================================================
+# BLOCK 0: ALL NECESSARY IMPORTS AND CONFIGURATION
+# ============================================================================
+# === Standard Python Library ===
+import streamlit as st
+import pandas as pd
+import numpy as np
+import requests
+import logging
+import time
+import hashlib
+import json
+import re
+import os
+import sys
+import traceback
+import io
+import pickle
+import random
+import math
+import warnings
+import csv
+import base64
+import urllib.parse
+import tempfile
+import itertools
+import functools
+import operator
+import string
+import textwrap
+import decimal
+import uuid
+import glob
+import shutil
+import zipfile
+import threading
+import queue
+import concurrent.futures
+import signal
+import platform
+import gc
+import copy
+import pprint
+import statistics
+import secrets
+import subprocess
+import inspect
+import importlib
+import importlib.util
+import webbrowser
+import calendar
+import hmac
+import configparser
+import argparse
+import getpass
+import sqlite3
+from html import escape, unescape
+from xml.etree import ElementTree
+import xml.dom.minidom
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import smtplib
+
+# === Typing and Utilities ===
+from typing import Dict, List, Any, Optional, Tuple, Union, Set, Callable, Iterable, Iterator, Generator
+from dataclasses import dataclass, field, asdict, astuple, replace
+from functools import lru_cache, wraps, reduce, partial
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+from datetime import datetime, timedelta, date, timezone
+from collections import defaultdict, Counter, deque, OrderedDict, ChainMap, namedtuple
+from enum import Enum, auto, IntEnum
+from threading import Lock, RLock, Semaphore, Thread, Event, Barrier, Condition
+from contextlib import contextmanager, closing, suppress, ExitStack
+from pathlib import Path, PurePath
+from abc import ABC, abstractmethod
+from multiprocessing import Pool, cpu_count
+import multiprocessing as mp
+from decimal import Decimal, ROUND_HALF_UP
+
+# ============================================================================
+# OPTIONAL IMPORTS WITH ERROR HANDLING
+# ============================================================================
+# === PIL/Pillow (Images) ===
+try:
+    from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+
+# === pytz (Timezones) ===
+try:
+    import pytz
+    PYTZ_AVAILABLE = True
+except ImportError:
+    PYTZ_AVAILABLE = False
+
+# === dateutil (Date Parsing) ===
+try:
+    import dateutil
+    from dateutil.parser import parse
+    from dateutil.relativedelta import relativedelta
+    DATEUTIL_AVAILABLE = True
+except ImportError:
+    DATEUTIL_AVAILABLE = False
+
+# === holidays (Holidays) ===
+try:
+    import holidays
+    HOLIDAYS_AVAILABLE = True
+except ImportError:
+    HOLIDAYS_AVAILABLE = False
+
+# === phonenumbers (Phones) ===
+try:
+    import phonenumbers
+    from phonenumbers import PhoneNumberType, PhoneNumber
+    from phonenumbers import parse as parse_phone, format_number, PhoneNumberFormat
+    PHONENUMBERS_AVAILABLE = True
+except ImportError:
+    PHONENUMBERS_AVAILABLE = False
+
+# === validators (Validation) ===
+try:
+    import validators
+    from validators import url, email as validate_email, domain, ip_address
+    VALIDATORS_AVAILABLE = True
+except ImportError:
+    VALIDATORS_AVAILABLE = False
+
+# === pycountry (Countries) ===
+try:
+    import pycountry
+    PYCOUNTRY_AVAILABLE = True
+except ImportError:
+    PYCOUNTRY_AVAILABLE = False
+
+# === tzlocal (Local Timezone) ===
+try:
+    import tzlocal
+    TZLOCAL_AVAILABLE = True
+except ImportError:
+    TZLOCAL_AVAILABLE = False
+
+# === Polars (Fast DataFrames) ===
+try:
+    import polars as pl
+    import polars.selectors as cs
+    POLARS_AVAILABLE = True
+    logger_polars = logging.getLogger('polars')
+    logger_polars.setLevel(logging.WARNING)
+except ImportError:
+    POLARS_AVAILABLE = False
+    pl = None
+
+# === DuckDB (Analytical DB) ===
+try:
+    import duckdb
+    DUCKDB_AVAILABLE = True
+except ImportError:
+    DUCKDB_AVAILABLE = False
+    duckdb = None
+
+# DASK removed due to conflict with pandas 2.3.3
+DASK_AVAILABLE = False
+DASK_DF_AVAILABLE = False
+
+# === Ray (Distributed Computing) ===
+try:
+    import ray
+    RAY_AVAILABLE = True
+except ImportError:
+    RAY_AVAILABLE = False
+
+# === Modin (Parallel Pandas) ===
+try:
+    import modin.pandas as mpd
+    import modin.config as mcfg
+    MODIN_AVAILABLE = True
+except ImportError:
+    MODIN_AVAILABLE = False
+
+# === PyArrow (Columnar Data) ===
+try:
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    import pyarrow.csv as pc
+    import pyarrow.json as pj
+    import pyarrow.fs as pfs
+    import pyarrow.compute as pc_comp
+    import pyarrow.dataset as ds
+    PYARROW_AVAILABLE = True
+except ImportError:
+    PYARROW_AVAILABLE = False
+
+# === Pandera (DataFrame Validation) ===
+try:
+    import pandera as pandera_schema
+    from pandera import Column, DataFrameSchema, Check, Index
+    PANDERA_AVAILABLE = True
+except ImportError:
+    PANDERA_AVAILABLE = False
+
+# === scikit-learn (ML) ===
+try:
+    import sklearn
+    from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, HashingVectorizer
+    from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB, ComplementNB
+    from sklearn.pipeline import Pipeline, make_pipeline, FeatureUnion
