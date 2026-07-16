@@ -21,7 +21,5 @@ pymatting
 timm
 POT
 pyiqa
-realesrgan
-basicsr
 accelerate
 safetensors
