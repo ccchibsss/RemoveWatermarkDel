@@ -1,12 +1,12 @@
 # ==============================================================================
 # requirements.txt для Streamlit Cloud (Python 3.12)
-# Оптимизирован для быстрой сборки из готовых wheel-пакетов (без компиляции C/C++)
+# ВАЖНО: Streamlit закреплен на версии 1.31.1 для совместимости с canvas
 # ==============================================================================
 
 # --- Core & UI ---
-streamlit>=1.32.0
-streamlit-drawable-canvas>=0.9.3
-streamlit-image-comparison>=0.0.4
+streamlit==1.31.1
+streamlit-drawable-canvas==0.9.3
+streamlit-image-comparison==0.0.4
 
 # --- Deep Learning & Vision ---
 torch>=2.2.0
