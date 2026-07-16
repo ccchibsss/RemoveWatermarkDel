@@ -5,7 +5,7 @@
 
 # --- Core & UI ---
 streamlit==1.31.1
-streamlit-drawable-canvas==0.9.3
+streamlit-drawable-canvas>=0.9.4
 streamlit-image-comparison==0.0.4
 
 # --- Deep Learning & Vision ---
