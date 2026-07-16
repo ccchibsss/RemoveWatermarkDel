@@ -3338,7 +3338,7 @@ with tab1:
                 st.info(f"✅ Используется ручная маска ({np.count_nonzero(user_mask)} пикселей)")
         col1, col2 = st.columns(2)
         with col1:
-            st.image(image, caption=f"Оригинал: {uploaded.name}", use_container_width=True)
+            st.image(image, caption=f"Оригинал: {uploaded.name}", use_column_width=True)
             if st.button("🚀 Обработать (Forensic-Proof v8.0)", type="primary", use_container_width=True):
                 with st.spinner("Загрузка моделей (ленивая)..."):
                     yolo_model, device = load_yolo_model()
