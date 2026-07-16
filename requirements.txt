@@ -1,13 +1,6 @@
-# ==============================================================================
-# requirements.txt (Исправленная версия)
-# ==============================================================================
-
-# Core & UI (Строгие версии для совместимости canvas)
 streamlit==1.31.1
 streamlit-drawable-canvas==0.9.3
 streamlit-image-comparison==0.0.4
-
-# Deep Learning & Vision
 torch>=2.2.0
 torchvision>=0.17.0
 numpy>=1.26.0
@@ -15,16 +8,12 @@ opencv-python-headless>=4.9.0
 opencv-contrib-python-headless>=4.9.0
 Pillow>=10.2.0
 scipy>=1.12.0
-
-# Detection & Inpainting
 ultralytics>=8.1.0
 diffusers>=0.27.0
 transformers>=4.38.0
 timm>=0.9.16
 accelerate>=0.27.0
 safetensors>=0.4.2
-
-# Background Removal & Utilities
 rembg>=2.0.55
 onnxruntime>=1.17.0
 easyocr>=1.7.1
