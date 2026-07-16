@@ -19,6 +19,5 @@ streamlit-drawable-canvas
 streamlit-image-comparison
 timm
 POT
-pyiqa
 accelerate
 safetensors
