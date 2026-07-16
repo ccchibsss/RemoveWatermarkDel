@@ -2,7 +2,7 @@ streamlit
 torch
 torchvision
 numpy
-opencv-python
+opencv-python-headless
 Pillow
 PyYAML
 ultralytics
@@ -17,7 +17,6 @@ mediapipe
 imagehash
 streamlit-drawable-canvas
 streamlit-image-comparison
-pymatting
 timm
 POT
 pyiqa
